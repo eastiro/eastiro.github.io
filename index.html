@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!--
+  Personal homepage for GitHub Pages.
+  Student: eastiro  ·  Module: CSI205TC Networking and Distributed Computing
+
+  Deliberately dependency-free: no framework, no CDN, no external font.
+  Everything is served from this origin, so the page is a closed system that
+  can be measured end to end (see ../analysis/REPORT_Q2.md section 3).
+  The only subresources are style.css, main.js and favicon.svg.
+-->
+
+<title>eastiro — Data Science Portfolio</title>
+<meta name="description" content="Personal homepage of eastiro: evidence-led data science projects in sports analytics, aviation networks and motorsport strategy.">
+<meta name="author" content="eastiro">
+<meta name="theme-color" content="#0b1020">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="eastiro — Data Science Portfolio">
+<meta property="og:description" content="Evidence-led data projects: CS2 tactical analysis, U.S. flight-delay networks, Formula 1 strategy research.">
+<meta property="og:url" content="https://eastiro.github.io/">
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+
+<!-- Set the theme before first paint so a light-mode visitor never sees a
+     dark flash. Kept inline and tiny for exactly that reason. -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("theme");
+      var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+      document.documentElement.setAttribute("data-theme", saved || (prefersLight ? "light" : "dark"));
+    } catch (e) { /* private mode: keep the default */ }
+    document.documentElement.classList.add("js");
+  })();
+</script>
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">e</span>
+      <span class="brand-text">eastiro</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a class="btn btn-ghost" href="https://github.com/eastiro" target="_blank" rel="noopener noreferrer">
+        GitHub
+      </a>
+      <button class="theme-toggle" type="button" id="themeToggle"
+              aria-label="Switch colour theme" aria-pressed="false">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <g stroke-linecap="round">
+            <path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6"/>
+            <path d="M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/>
+          </g>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="top">
+    <div class="hero-glow" aria-hidden="true"></div>
+
+    <div class="container hero-inner">
+      <p class="eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        Data Science &middot; Networking &amp; Distributed Computing
+      </p>
+
+      <h1 class="hero-title">
+        Hi, I&rsquo;m <span class="grad">eastiro</span>.
+      </h1>
+
+      <p class="hero-lead">
+        I build <strong>evidence-led data tools</strong> &mdash; from professional
+        CS2 match demos and U.S. flight-delay networks to Formula&nbsp;1 strategy
+        research. My rule is simple: every claim should be traceable back to the
+        raw records that produced it.
+      </p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#projects">View projects</a>
+        <a class="btn btn-outline" href="https://github.com/eastiro"
+           target="_blank" rel="noopener noreferrer">GitHub profile</a>
+      </div>
+
+      <dl class="hero-stats">
+        <div class="stat">
+          <dt>Verified demos analysed</dt>
+          <dd>135</dd>
+        </div>
+        <div class="stat">
+          <dt>Flight records studied</dt>
+          <dd>611,735</dd>
+        </div>
+        <div class="stat">
+          <dt>Automated tests written</dt>
+          <dd>604+</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section class="section reveal" id="about">
+    <div class="container">
+      <h2 class="section-title"><span class="num">01</span> About</h2>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I&rsquo;m a student at the <strong>Academy of AIAT, Xi&rsquo;an
+            Jiaotong-Liverpool University</strong>, working mostly in Python and
+            TypeScript on problems where the interesting part is not the model but
+            the <em>evidence</em>: showing where a number came from and being
+            explicit about what it does not prove.
+          </p>
+          <p>
+            My projects tend to start with a narrow question &mdash; could a
+            different final pit call have changed a Grand Prix result? where does
+            a flight delay stop propagating? &mdash; and end with a reproducible
+            pipeline, an audit trail and a stated boundary on the conclusions.
+            Several of them report <em>negative</em> results on purpose, because a
+            tool that abstains honestly is more useful than one that guesses.
+          </p>
+          <p>
+            This site is hand-written HTML and CSS with no framework or build
+            step. It ships in a few kilobytes and loads without a single external
+            request, which is a deliberate engineering choice rather than a
+            limitation.
+          </p>
+        </div>
+
+        <ul class="about-facts">
+          <li>
+            <span class="fact-label">Focus</span>
+            <span class="fact-value">Data engineering &middot; analytics &middot; reproducibility</span>
+          </li>
+          <li>
+            <span class="fact-label">Languages</span>
+            <span class="fact-value">Python &middot; TypeScript &middot; SQL &middot; 中文 / English</span>
+          </li>
+          <li>
+            <span class="fact-label">Currently</span>
+            <span class="fact-value">Studying networking &amp; distributed computing</span>
+          </li>
+          <li>
+            <span class="fact-label">Contact</span>
+            <span class="fact-value"><a href="https://github.com/eastiro" target="_blank" rel="noopener noreferrer">github.com/eastiro</a></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS ================= -->
+  <section class="section reveal" id="projects">
+    <div class="container">
+      <h2 class="section-title"><span class="num">02</span> Selected projects</h2>
+      <p class="section-lead">
+        Three research projects, each with a shipped interface and a full audit
+        trail. All source code is public.
+      </p>
+
+      <div class="cards">
+
+        <article class="card reveal">
+          <header class="card-head">
+            <span class="card-tag">Sports analytics</span>
+            <h3 class="card-title">CS Tactical Lens</h3>
+          </header>
+          <p class="card-body">
+            A workbench that turns real CS2 match demos into <strong>reviewable
+            cross-team comparisons</strong> of pre-contact positioning. Every
+            finding links back to the exact round, radar map and equipment HUD so
+            a reader can check it tick by tick.
+          </p>
+          <ul class="card-stats">
+            <li><strong>135</strong> verified demos</li>
+            <li><strong>352</strong> tests</li>
+            <li><strong>7</strong> maps</li>
+          </ul>
+          <ul class="chips">
+            <li>Python</li><li>Streamlit</li><li>Awpy</li><li>pytest</li>
+          </ul>
+          <a class="card-link" href="https://github.com/eastiro/cs-tactical-lens"
+             target="_blank" rel="noopener noreferrer">
+            View on GitHub
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5L10.5 8L6 12.5"/></svg>
+          </a>
+        </article>
+
+        <article class="card reveal">
+          <header class="card-head">
+            <span class="card-tag">Network data study</span>
+            <h3 class="card-title">Airports Under Stress</h3>
+          </header>
+          <p class="card-body">
+            An interactive study of how <strong>flight delays propagate and
+            recover</strong> along real aircraft rotations, and how they co-occur
+            with weather and schedule congestion. Bilingual, with three delay
+            thresholds and a stated scientific boundary.
+          </p>
+          <ul class="card-stats">
+            <li><strong>611,735</strong> flights</li>
+            <li><strong>549,388</strong> rotations</li>
+            <li><strong>54</strong> airports</li>
+          </ul>
+          <ul class="chips">
+            <li>Python</li><li>pandas</li><li>React 19</li><li>TypeScript</li>
+          </ul>
+          <a class="card-link" href="https://github.com/eastiro/airports-under-stress"
+             target="_blank" rel="noopener noreferrer">
+            View on GitHub
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5L10.5 8L6 12.5"/></svg>
+          </a>
+        </article>
+
+        <article class="card reveal">
+          <header class="card-head">
+            <span class="card-tag">Motorsport research</span>
+            <h3 class="card-title">F1 Strategy Lab</h3>
+          </header>
+          <p class="card-body">
+            An explainable strategy study built on public OpenF1 and FastF1 data:
+            a wet-to-slick pit-call sandbox for one Grand Prix, plus a
+            five-season audit of whether public signals can support that decision
+            at all. The honest answer is mostly <em>no</em>.
+          </p>
+          <ul class="card-stats">
+            <li><strong>173</strong> transitions</li>
+            <li><strong>27</strong> signals issued</li>
+            <li><strong>148</strong> tests</li>
+          </ul>
+          <ul class="chips">
+            <li>Python</li><li>Streamlit</li><li>OpenF1</li><li>FastF1</li>
+          </ul>
+          <a class="card-link" href="https://github.com/eastiro/f1-strategy-lab"
+             target="_blank" rel="noopener noreferrer">
+            View on GitHub
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5L10.5 8L6 12.5"/></svg>
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SKILLS ================= -->
+  <section class="section reveal" id="skills">
+    <div class="container">
+      <h2 class="section-title"><span class="num">03</span> Toolkit</h2>
+
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h3>Data &amp; analysis</h3>
+          <ul class="chips">
+            <li>Python</li><li>pandas</li><li>NumPy</li><li>PyArrow</li>
+            <li>pytest</li><li>parquet</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Interfaces</h3>
+          <ul class="chips">
+            <li>Streamlit</li><li>React</li><li>TypeScript</li><li>Vite</li>
+            <li>HTML &amp; CSS</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Engineering</h3>
+          <ul class="chips">
+            <li>Git</li><li>GitHub Actions</li><li>SQL</li><li>Linux</li>
+            <li>Sockets / TCP / UDP</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p class="footer-note">
+      &copy; <span id="year">2026</span> eastiro &middot; Hand-written HTML &amp; CSS,
+      no frameworks.
+    </p>
+    <p class="footer-links">
+      <a href="https://github.com/eastiro" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="#top">Back to top</a>
+    </p>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
