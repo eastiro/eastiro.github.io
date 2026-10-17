@@ -35,16 +35,24 @@ assets/favicon.svg      tab icon
 
 **No dependencies, no build step.** No framework, no bundler, no CDN, no web
 font. The page is hand-written HTML and CSS plus ~3 KB of vanilla JavaScript,
-and it totals under 30 KB across four files. Nothing is fetched from a third
+and it totals about 31 KB across four files. Nothing is fetched from a third
 party. This was a deliberate choice: it means the page has no supply chain, no
 build to break, and — relevant to the coursework that produced it — every byte
 observed in a packet capture belongs to this site.
 
+**The Apple-style look is built inside that constraint.** The design borrows
+Apple's product-page grammar — one enormous headline, generous white space,
+hairline rules instead of drop shadows, a translucent 48 px navigation bar, and a
+tile grid on a 12 px gutter — and Apple's colour values (`#f5f5f7`, `#1d1d1f`,
+`#0071e3`). It borrows no web font: the type resolves to the platform UI font,
+which is what Apple's own pages do. A font CDN would have broken the
+"no external request" property the coursework measure depends on.
+
 **The theme toggle is a CSS custom-property swap, not a second stylesheet.** The
-palette lives in `:root` and is overridden under `[data-theme="light"]`, so
+light palette lives in `:root` and is overridden under `[data-theme="dark"]`, so
 switching themes changes one attribute on `<html>`. A tiny inline script sets
-that attribute *before* first paint, so a visitor whose system prefers light mode
-never sees a dark flash.
+that attribute *before* first paint, so a visitor whose system prefers dark mode
+never sees a light flash.
 
 ## Accessibility
 
