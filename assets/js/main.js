@@ -37,8 +37,8 @@
     });
   }
 
-  /* ---------- 2. sticky header shadow ---------- */
-  var header = document.querySelector(".site-header");
+  /* ---------- 2. hairline under the sticky nav once scrolled ---------- */
+  var header = document.querySelector(".globalnav");
   if (header) {
     var onScroll = function () {
       header.classList.toggle("is-stuck", window.scrollY > 8);
