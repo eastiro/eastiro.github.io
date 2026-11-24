@@ -36,8 +36,8 @@ assets/favicon.svg      tab icon
 ## Two engineering decisions worth stating
 
 **No dependencies, no build step.** No framework, no bundler, no CDN, no web
-font. The page is hand-written HTML, CSS, and ~6.8 KB of vanilla JavaScript,
-totalling 55,801 bytes (~54.5 KB) across four files. Nothing is fetched from a
+font. The page is hand-written HTML, CSS, and ~5.8 KB of vanilla JavaScript,
+totalling 54,910 bytes (~53.6 KB) across four files. Nothing is fetched from a
 third party. This was a deliberate choice: it means the page has no supply chain,
 no build to break, and — relevant to the coursework that produced it — every byte
 observed in a packet capture belongs to this site.

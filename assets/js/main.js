@@ -117,29 +117,7 @@
     });
   }
 
-  /* ---------- 5. hero metric gentle count-up ---------- */
-  var counters = Array.prototype.slice.call(document.querySelectorAll(".spec-value[data-count]"));
-  if (!reduceMotion && counters.length && "requestAnimationFrame" in window) {
-    counters.forEach(function (el) {
-      var target = parseInt(el.getAttribute("data-count"), 10);
-      var suffix = el.getAttribute("data-suffix") || "";
-      if (!isFinite(target)) return;
-      var duration = 680;
-      var start = null;
-
-      function step(ts) {
-        if (start === null) start = ts;
-        var p = Math.min((ts - start) / duration, 1);
-        var eased = 1 - Math.pow(1 - p, 3);
-        var val = Math.round(target * eased);
-        el.textContent = val.toLocaleString("en-US") + suffix;
-        if (p < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    });
-  }
-
-  /* ---------- 6. reveal on scroll ---------- */
+  /* ---------- 5. reveal on scroll ---------- */
   var reveals = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
   if (!("IntersectionObserver" in window)) {
     reveals.forEach(function (el) { el.classList.add("is-visible"); });
