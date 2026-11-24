@@ -13,20 +13,22 @@ project rather than as a homepage.
 
 ## What the site is
 
-A single-page portfolio for three research projects:
+A single-page portfolio presenting four core research systems and two lightweight side projects:
 
-| Project | Topic |
-|---|---|
-| [cs-tactical-lens](https://github.com/eastiro/cs-tactical-lens) | Cross-team pre-contact positioning analysis of professional CS2 match demos |
-| [airports-under-stress](https://github.com/eastiro/airports-under-stress) | How U.S. flight delays propagate and recover along aircraft rotations |
-| [f1-strategy-lab](https://github.com/eastiro/f1-strategy-lab) | Wet-to-slick pit-call research on public OpenF1 / FastF1 data |
+| Project | Category | Topic |
+|---|---|---|
+| [vct-first-blood-analytics](https://github.com/eastiro/vct-first-blood-analytics) | Esports analytics | VCT 2026 first-blood analysis across 32,786 rounds with a live static site |
+| [cs-tactical-lens](https://github.com/eastiro/cs-tactical-lens) | Esports analytics | Cross-team pre-contact positioning analysis of 135 verified CS2 match demos |
+| [airports-under-stress](https://github.com/eastiro/airports-under-stress) | Systems &amp; strategy | How U.S. flight delays propagate and recover along 549,388 aircraft rotations |
+| [f1-strategy-lab](https://github.com/eastiro/f1-strategy-lab) | Systems &amp; strategy | Five-season wet-to-slick pit-call audit on public OpenF1 / FastF1 data |
+| [STEAM-INFOR-](https://github.com/eastiro/STEAM-INFOR-) | Side experiment | Steam Cyber Verdict generator built with Streamlit and the Steam Web API |
 
 ## Structure
 
 ```
-index.html              the whole page
-assets/css/style.css    all styling (dark + light themes)
-assets/js/main.js       theme toggle, scroll reveal, nav highlight
+index.html              the whole page (Bento layout + bespoke inline SVGs)
+assets/css/style.css    all styling (dark + light themes, responsive Bento grid)
+assets/js/main.js       theme toggle, category filter, spotlight hover, scroll reveal
 assets/favicon.svg      tab icon
 .nojekyll               tells Pages to skip Jekyll processing
 ```
@@ -34,10 +36,10 @@ assets/favicon.svg      tab icon
 ## Two engineering decisions worth stating
 
 **No dependencies, no build step.** No framework, no bundler, no CDN, no web
-font. The page is hand-written HTML and CSS plus ~3 KB of vanilla JavaScript,
-and it totals about 31 KB across four files. Nothing is fetched from a third
-party. This was a deliberate choice: it means the page has no supply chain, no
-build to break, and — relevant to the coursework that produced it — every byte
+font. The page is hand-written HTML, CSS, and ~6.8 KB of vanilla JavaScript,
+totalling 55,801 bytes (~54.5 KB) across four files. Nothing is fetched from a
+third party. This was a deliberate choice: it means the page has no supply chain,
+no build to break, and — relevant to the coursework that produced it — every byte
 observed in a packet capture belongs to this site.
 
 **The Apple-style look is built inside that constraint.** The design borrows

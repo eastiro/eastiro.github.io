@@ -1,43 +1,49 @@
 /* ==========================================================================
    eastiro.github.io — behaviour
-   Small, dependency-free. Three jobs:
-     1. theme toggle, persisted in localStorage
-     2. sticky-header shadow once the page has scrolled
-     3. reveal-on-scroll, using IntersectionObserver with a safe fallback
-   Everything degrades: with JavaScript disabled the page is fully readable,
-   because the reveal animation is only applied under the .js class that the
-   inline bootstrap script adds.
+   Zero dependencies, progressive enhancement only:
+     1. theme toggle persisted in localStorage + theme-color meta sync
+     2. sticky header border on scroll
+     3. project category filtering (All / Esports / Systems & Strategy / Experiments)
+     4. subtle pointer-tracking spotlight on project tiles
+     5. reveal-on-scroll & gentle hero count-up (respects reduced motion)
+     6. active nav section highlight & footer year
    ========================================================================== */
 (function () {
   "use strict";
 
   var root = document.documentElement;
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------- 1. theme ---------- */
   var toggle = document.getElementById("themeToggle");
+  var metaTheme = document.querySelector('meta[name="theme-color"]');
 
   function currentTheme() {
     return root.getAttribute("data-theme") === "light" ? "light" : "dark";
   }
 
-  function syncToggle() {
-    if (!toggle) return;
-    // aria-pressed reflects "light mode is on", so screen readers announce a
-    // meaningful state rather than an unlabelled button.
-    toggle.setAttribute("aria-pressed", currentTheme() === "light" ? "true" : "false");
+  function syncThemeUI() {
+    var isLight = currentTheme() === "light";
+    if (toggle) {
+      toggle.setAttribute("aria-pressed", isLight ? "true" : "false");
+    }
+    if (metaTheme) {
+      metaTheme.setAttribute("content", isLight ? "#ffffff" : "#000000");
+    }
   }
 
   if (toggle) {
-    syncToggle();
+    syncThemeUI();
     toggle.addEventListener("click", function () {
       var next = currentTheme() === "light" ? "dark" : "light";
       root.setAttribute("data-theme", next);
       try { localStorage.setItem("theme", next); } catch (e) { /* ignore */ }
-      syncToggle();
+      syncThemeUI();
     });
   }
 
-  /* ---------- 2. hairline under the sticky nav once scrolled ---------- */
+  /* ---------- 2. hairline under sticky nav once scrolled ---------- */
   var header = document.querySelector(".globalnav");
   if (header) {
     var onScroll = function () {
@@ -47,11 +53,95 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
-  /* ---------- 3. reveal on scroll ---------- */
-  var reveals = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+  /* ---------- 3. project category filtering ---------- */
+  var filterButtons = Array.prototype.slice.call(document.querySelectorAll(".filter-btn[data-filter]"));
+  var tilesGrid = document.getElementById("projectTiles");
+  var tiles = Array.prototype.slice.call(document.querySelectorAll("#projectTiles .tile[data-category]"));
+  var expBlock = document.getElementById("experimentsBlock");
+  var expItems = Array.prototype.slice.call(document.querySelectorAll("#experimentsBlock .exp-item[data-category]"));
+  var filterStatus = document.getElementById("filterStatus");
 
+  function applyFilter(category) {
+    var visibleTiles = 0;
+    tiles.forEach(function (tile) {
+      var match = category === "all" || tile.getAttribute("data-category") === category;
+      tile.hidden = !match;
+      if (match) visibleTiles += 1;
+    });
+
+    var visibleExp = 0;
+    expItems.forEach(function (item) {
+      var match = category === "all" || item.getAttribute("data-category") === category;
+      item.hidden = !match;
+      if (match) visibleExp += 1;
+    });
+
+    if (tilesGrid) {
+      tilesGrid.hidden = visibleTiles === 0;
+      tilesGrid.setAttribute("data-filtered", category === "all" ? "false" : "true");
+    }
+    if (expBlock) {
+      expBlock.hidden = visibleExp === 0;
+    }
+
+    filterButtons.forEach(function (btn) {
+      var active = btn.getAttribute("data-filter") === category;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+
+    if (filterStatus) {
+      var total = visibleTiles + visibleExp;
+      filterStatus.textContent = category === "all"
+        ? "Showing all " + total + " projects."
+        : "Showing " + total + " projects in " + category + ".";
+    }
+  }
+
+  if (filterButtons.length) {
+    filterButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        applyFilter(btn.getAttribute("data-filter"));
+      });
+    });
+  }
+
+  /* ---------- 4. subtle pointer-tracking spotlight on tiles ---------- */
+  if (!reduceMotion && tiles.length) {
+    tiles.forEach(function (tile) {
+      tile.addEventListener("pointermove", function (ev) {
+        var rect = tile.getBoundingClientRect();
+        tile.style.setProperty("--mx", (ev.clientX - rect.left).toFixed(1) + "px");
+        tile.style.setProperty("--my", (ev.clientY - rect.top).toFixed(1) + "px");
+      }, { passive: true });
+    });
+  }
+
+  /* ---------- 5. hero metric gentle count-up ---------- */
+  var counters = Array.prototype.slice.call(document.querySelectorAll(".spec-value[data-count]"));
+  if (!reduceMotion && counters.length && "requestAnimationFrame" in window) {
+    counters.forEach(function (el) {
+      var target = parseInt(el.getAttribute("data-count"), 10);
+      var suffix = el.getAttribute("data-suffix") || "";
+      if (!isFinite(target)) return;
+      var duration = 680;
+      var start = null;
+
+      function step(ts) {
+        if (start === null) start = ts;
+        var p = Math.min((ts - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        var val = Math.round(target * eased);
+        el.textContent = val.toLocaleString("en-US") + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  /* ---------- 6. reveal on scroll ---------- */
+  var reveals = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
   if (!("IntersectionObserver" in window)) {
-    // Old browser: show everything immediately rather than leaving it hidden.
     reveals.forEach(function (el) { el.classList.add("is-visible"); });
   } else {
     var io = new IntersectionObserver(function (entries) {
@@ -61,12 +151,12 @@
           io.unobserve(entry.target);
         }
       });
-    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.05 });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
 
     reveals.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- 4. nav highlight ---------- */
+  /* ---------- 7. nav active highlight ---------- */
   var links = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
   var targets = links
     .map(function (a) { return document.querySelector(a.getAttribute("href")); })
@@ -85,7 +175,7 @@
     targets.forEach(function (t) { spy.observe(t); });
   }
 
-  /* ---------- 5. footer year ---------- */
+  /* ---------- 8. footer year ---------- */
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 })();

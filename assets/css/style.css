@@ -1,67 +1,54 @@
 /* ==========================================================================
    eastiro.github.io — stylesheet
-
-   Hand-written, no framework, no web font, no external request.
-
-   Visual language: an Apple-style product page.
-     · one enormous headline per screen, everything else small
-     · hairline rules instead of drop shadows (Apple uses almost no shadow)
-     · a 12 px translucent navigation bar pinned to the top
-     · content as large rounded tiles on a soft grey field
-     · one accent colour — Apple blue — and nothing else competing with it
-
-   Because there is no web font, the type stack resolves to the platform UI
-   font: SF Pro on Apple hardware, Segoe UI on Windows, Roboto on Android.
-   That is exactly what Apple's own pages do, so the look survives without
-   pulling a font over the network — which matters here, because the report
-   (../analysis/REPORT_Q2.md §3) states that this page issues no external
-   request. Adding a font CDN would falsify that measurement.
-
-   Theming is a single attribute on <html>, so the dark/light switch costs no
-   extra HTTP request.
+   Hand-written, zero external dependencies, no web font, no external requests.
+   Visual language: Apple-inspired editorial portfolio + Bento project grid.
    ========================================================================== */
 
 /* ---------- design tokens ---------- */
 :root {
   color-scheme: light;
 
-  /* Apple's neutral palette. #f5f5f7 and #1d1d1f are the two greys that
-     appear on essentially every Apple product page. */
-  --bg:          #ffffff;
-  --bg-alt:      #f5f5f7;
-  --ink:         #1d1d1f;
-  --ink-2:       #6e6e73;
-  --ink-3:       #86868b;
-  --hairline:    #d2d2d7;
+  --bg:           #ffffff;
+  --bg-alt:       #f5f5f7;
+  --surface:      #ffffff;
+  --surface-sub:  #fbfbfd;
+  --ink:          #1d1d1f;
+  --ink-2:        #515154;
+  --ink-3:        #6e6e73;
+  --hairline:     #d2d2d7;
+  --hairline-soft: rgba(29, 29, 31, 0.08);
 
-  /* Apple blue, and its hover state. */
-  --accent:      #0071e3;
-  --accent-hover:#0077ed;
+  --accent:       #0071e3;
+  --accent-hover: #0077ed;
+  --live:         #248a3d;
+  --live-bg:      rgba(36, 138, 61, 0.10);
 
-  --maxw:        1120px;
-  --nav-h:       48px;
-  --tile-radius: 28px;
+  --maxw:         1120px;
+  --nav-h:        50px;
+  --tile-radius:  26px;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
           "Helvetica Neue", "Segoe UI", Roboto, "PingFang SC",
           "Microsoft YaHei", Arial, sans-serif;
 }
 
-/* Dark theme. Pure black for the page and #1d1d1f for raised surfaces is
-   Apple's dark-mode recipe; the accent lifts to #2997ff because #0071e3 is
-   too dark to read against black. */
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --bg:          #000000;
-  --bg-alt:      #1d1d1f;
-  --ink:         #f5f5f7;
-  --ink-2:       #a1a1a6;
-  --ink-3:       #86868b;
-  --hairline:    #2d2d2f;
+  --bg:           #000000;
+  --bg-alt:       #0b0b0d;
+  --surface:      #161618;
+  --surface-sub:  #1c1c1f;
+  --ink:          #f5f5f7;
+  --ink-2:        #a1a1a6;
+  --ink-3:        #86868b;
+  --hairline:     #2c2c2e;
+  --hairline-soft: rgba(255, 255, 255, 0.08);
 
-  --accent:      #2997ff;
-  --accent-hover:#4aabff;
+  --accent:       #2997ff;
+  --accent-hover: #4aabff;
+  --live:         #30d158;
+  --live-bg:      rgba(48, 209, 88, 0.14);
 }
 
 /* ---------- reset ---------- */
@@ -82,8 +69,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 17px;              /* Apple's body size */
-  line-height: 1.47059;         /* Apple's body line height */
+  font-size: 17px;
+  line-height: 1.48;
   letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -91,20 +78,27 @@ body {
 }
 
 img, svg { max-width: 100%; display: block; }
-
 dl, dd, dt, figure, p { margin: 0; }
-
 ul { margin: 0; padding: 0; list-style: none; }
-
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
-
 h1, h2, h3 { text-wrap: balance; }
+[hidden] { display: none !important; }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .skip-link {
@@ -121,20 +115,18 @@ h1, h2, h3 { text-wrap: balance; }
 
 .container { width: min(100% - 3rem, var(--maxw)); margin-inline: auto; }
 
-/* ---------- navigation ----------
-   Apple's global nav: 48 px tall, 12 px links, translucent with a strong
-   backdrop blur so the page scrolls underneath it. */
+/* ---------- sticky frosted navigation ---------- */
 .globalnav {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  background: color-mix(in srgb, var(--bg) 76%, transparent);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.25s ease;
 }
-.globalnav.is-stuck { border-bottom-color: var(--hairline); }
+.globalnav.is-stuck { border-bottom-color: var(--hairline-soft); }
 
 .nav {
   width: min(100% - 3rem, var(--maxw));
@@ -147,41 +139,58 @@ h1, h2, h3 { text-wrap: balance; }
 
 .brand {
   color: var(--ink);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 0.96rem;
+  font-weight: 650;
+  letter-spacing: -0.025em;
 }
+.brand-dot { color: var(--accent); }
 .brand:hover { text-decoration: none; }
 
 .nav-links { display: flex; gap: 1.75rem; }
 .nav-links a {
-  font-size: 0.75rem;
-  color: var(--ink-2);
-  padding: 0.2rem 0;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  padding: 0.25rem 0;
   transition: color 0.2s ease;
 }
-.nav-links a:hover { color: var(--ink); text-decoration: none; }
-.nav-links a.is-active { color: var(--ink); }
+.nav-links a:hover,
+.nav-links a.is-active { color: var(--ink); text-decoration: none; }
 
-.nav-actions { display: flex; align-items: center; gap: 0.9rem; margin-left: auto; }
+.nav-actions { display: flex; align-items: center; gap: 0.85rem; margin-left: auto; }
 
-.nav-link-ext { font-size: 0.75rem; color: var(--ink-2); }
+.nav-link-ext {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  transition: color 0.2s ease;
+}
 .nav-link-ext:hover { color: var(--ink); text-decoration: none; }
+.icon-ext {
+  width: 11px; height: 11px;
+  fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+}
 
 .theme-toggle {
-  width: 30px; height: 30px;
+  width: 32px; height: 32px;
   display: grid; place-items: center;
-  border: 0;
+  border: 1px solid transparent;
   background: transparent;
   border-radius: 50%;
-  color: var(--ink-2);
+  color: var(--ink-3);
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
-.theme-toggle:hover { background: var(--bg-alt); color: var(--ink); }
+.theme-toggle:hover {
+  background: var(--bg-alt);
+  border-color: var(--hairline-soft);
+  color: var(--ink);
+}
 .theme-toggle svg {
   width: 16px; height: 16px;
-  fill: none; stroke: currentColor; stroke-width: 1.6;
+  fill: none; stroke: currentColor; stroke-width: 1.65;
 }
 .theme-toggle .icon-sun { display: none; }
 [data-theme="light"] .theme-toggle .icon-sun  { display: block; }
@@ -191,24 +200,22 @@ h1, h2, h3 { text-wrap: balance; }
 .hero {
   position: relative;
   overflow: hidden;
-  padding: clamp(4.5rem, 11vw, 8.5rem) 0 clamp(2.5rem, 5vw, 3.5rem);
+  padding: clamp(4.25rem, 10vw, 7.75rem) 0 clamp(2.5rem, 5vw, 3.75rem);
   text-align: center;
 }
 
-/* Apple-Intelligence-style colour wash: three very soft radial gradients
-   (blue, purple, pink — Apple's own system colours) behind the headline. */
 .hero-glow {
   position: absolute;
-  inset: -25% -10% auto -10%;
-  height: 78vh;
+  inset: -24% -10% auto -10%;
+  height: 76vh;
   background:
-    radial-gradient(44% 56% at 28% 32%, rgba(0, 113, 227, 0.15), transparent 70%),
-    radial-gradient(36% 46% at 72% 26%, rgba(191, 90, 242, 0.10), transparent 70%),
-    radial-gradient(30% 38% at 52% 62%, rgba(255, 55, 95, 0.045), transparent 72%);
-  filter: blur(40px);
+    radial-gradient(44% 56% at 26% 32%, rgba(0, 113, 227, 0.14), transparent 70%),
+    radial-gradient(36% 48% at 74% 26%, rgba(191, 90, 242, 0.095), transparent 70%),
+    radial-gradient(32% 40% at 50% 64%, rgba(255, 70, 85, 0.055), transparent 72%);
+  filter: blur(42px);
   pointer-events: none;
 }
-[data-theme="dark"] .hero-glow { opacity: 0.75; }
+[data-theme="dark"] .hero-glow { opacity: 0.78; }
 
 .hero-inner { position: relative; }
 
@@ -216,24 +223,25 @@ h1, h2, h3 { text-wrap: balance; }
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--accent);
-  margin: 0 0 1.1rem;
+  margin: 0 0 1rem;
+  letter-spacing: -0.005em;
 }
 
 .hero-title {
-  font-size: clamp(3.5rem, 10vw, 7rem);
-  font-weight: 600;
+  font-size: clamp(3.5rem, 10vw, 6.75rem);
+  font-weight: 650;
   line-height: 1.02;
-  letter-spacing: -0.05em;
-  margin: 0 0 1.4rem;
+  letter-spacing: -0.052em;
+  margin: 0 0 1.25rem;
 }
 
 .hero-tagline {
-  font-size: clamp(1.15rem, 2.4vw, 1.55rem);
-  line-height: 1.36;
+  font-size: clamp(1.125rem, 2.3vw, 1.5rem);
+  line-height: 1.38;
   letter-spacing: -0.018em;
   color: var(--ink-2);
   max-width: 44ch;
-  margin: 0 auto 2.4rem;
+  margin: 0 auto 2.25rem;
 }
 
 .hero-cta {
@@ -241,7 +249,7 @@ h1, h2, h3 { text-wrap: balance; }
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 1.75rem;
+  gap: 0.9rem 1.15rem;
 }
 
 /* ---------- buttons / links ---------- */
@@ -249,21 +257,70 @@ h1, h2, h3 { text-wrap: balance; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.72rem 1.4rem;
-  border-radius: 980px;          /* Apple's button radius, literally */
+  gap: 0.4rem;
+  padding: 0.72rem 1.45rem;
+  border-radius: 980px;
   background: var(--accent);
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.96rem;
+  font-weight: 500;
   letter-spacing: -0.01em;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
-.pill:hover { background: var(--accent-hover); text-decoration: none; }
+.pill:hover { background: var(--accent-hover); text-decoration: none; transform: translateY(-1px); }
+
+.pill-sm {
+  padding: 0.52rem 1.05rem;
+  font-size: 0.875rem;
+}
+.pill-sm svg {
+  width: 11px; height: 11px;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+.pill-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.68rem 1.25rem;
+  border-radius: 980px;
+  border: 1px solid var(--hairline);
+  background: color-mix(in srgb, var(--surface) 75%, transparent);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.pill-ghost:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.pill-ghost svg {
+  width: 11px; height: 11px;
+  fill: none; stroke: currentColor; stroke-width: 2.2;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+.pill-ghost:hover svg { transform: translateX(2px); }
+
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--live);
+  box-shadow: 0 0 0 3px var(--live-bg);
+  flex-shrink: 0;
+}
 
 .text-link {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  font-size: 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
   color: var(--accent);
   letter-spacing: -0.01em;
 }
@@ -276,221 +333,463 @@ h1, h2, h3 { text-wrap: balance; }
 }
 .text-link:hover svg { transform: translateX(3px); }
 
-/* ---------- hero spec strip ----------
-   The Apple "key specs" row: number large, caption small, separated by
-   hairlines rather than by cards. */
+/* ---------- hero 4-column spec strip ---------- */
 .spec {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: clamp(3.5rem, 8vw, 6rem);
-  padding-top: clamp(2rem, 4vw, 2.75rem);
-  border-top: 1px solid var(--hairline);
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: clamp(3rem, 7vw, 5.25rem);
+  padding-top: clamp(1.75rem, 3.5vw, 2.5rem);
+  border-top: 1px solid var(--hairline-soft);
   text-align: center;
 }
 .spec-item {
   display: flex;
-  flex-direction: column-reverse;  /* value above caption, dt before dd in DOM */
-  gap: 0.45rem;
-  padding: 0 1rem;
+  flex-direction: column-reverse;
+  gap: 0.4rem;
+  padding: 0 0.75rem;
 }
-.spec-item + .spec-item { border-left: 1px solid var(--hairline); }
+.spec-item + .spec-item { border-left: 1px solid var(--hairline-soft); }
 .spec-value {
-  font-size: clamp(1.9rem, 3.8vw, 2.6rem);
-  font-weight: 600;
+  font-size: clamp(1.65rem, 3.1vw, 2.35rem);
+  font-weight: 650;
   letter-spacing: -0.035em;
-  line-height: 1;
+  line-height: 1.05;
   font-variant-numeric: tabular-nums;
 }
 .spec-label {
   font-size: 0.75rem;
   color: var(--ink-3);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
   line-height: 1.35;
 }
 
 /* ---------- sections ---------- */
-.section { padding: clamp(4rem, 9vw, 7.5rem) 0; }
+.section { padding: clamp(3.75rem, 8.5vw, 6.75rem) 0; }
 
 .section-title {
-  font-size: clamp(2rem, 4.4vw, 3.1rem);
-  font-weight: 600;
+  font-size: clamp(1.95rem, 4.2vw, 3rem);
+  font-weight: 650;
   line-height: 1.08;
   letter-spacing: -0.035em;
-  margin: 0 0 1rem;
+  margin: 0 0 0.9rem;
 }
 
 .section-lead {
-  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
-  line-height: 1.4;
+  font-size: clamp(1.02rem, 1.7vw, 1.22rem);
+  line-height: 1.44;
   letter-spacing: -0.015em;
   color: var(--ink-2);
-  max-width: 58ch;
-  margin: 0 0 clamp(2rem, 4vw, 3rem);
+  max-width: 56ch;
+  margin: 0;
 }
 
-/* The projects band sits on the grey field so the tiles read as cards without
-   needing a shadow. In dark mode the field is #1d1d1f instead of black. */
-.section-projects { background: var(--bg-alt); }
-[data-theme="dark"] .section-projects { background: #000000; }
+.section-projects {
+  background: var(--bg-alt);
+  border-top: 1px solid var(--hairline-soft);
+  border-bottom: 1px solid var(--hairline-soft);
+}
 
-/* ---------- tiles ---------- */
+/* ---------- projects header & segmented filter bar ---------- */
+.projects-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem 2rem;
+  margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
+.filter-bar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 980px;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  border: 1px solid var(--hairline-soft);
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  padding: 0.46rem 0.95rem;
+  border-radius: 980px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.filter-btn:hover { color: var(--ink); }
+.filter-btn.is-active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--hairline-soft);
+}
+.filter-count {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+.filter-btn.is-active .filter-count { color: var(--accent); font-weight: 600; }
+
+/* ---------- Bento project tiles ---------- */
 .tiles {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;                     /* Apple's tile gutter */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .tile {
-  --tile-bg: #ffffff;
+  --tile-bg: var(--surface);
   --tile-ink: var(--ink);
   --tile-ink-2: var(--ink-2);
   --tile-ink-3: var(--ink-3);
-  --tile-line: var(--hairline);
+  --tile-line: var(--hairline-soft);
+  --mx: 50%;
+  --my: 50%;
 
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: 420px;
-  padding: clamp(2.25rem, 4.5vw, 3.75rem);
+  padding: clamp(1.85rem, 3.6vw, 2.85rem);
   border-radius: var(--tile-radius);
   background: var(--tile-bg);
   color: var(--tile-ink);
+  border: 1px solid var(--tile-line);
+  transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
+              border-color 0.25s ease,
+              box-shadow 0.28s ease;
 }
 
-/* Dark mode inverts the relationship: the page goes black and the tiles lift
-   to #1d1d1f, which is Apple's dark-mode card grey. Without this the tiles
-   would be black-on-black and read as one undifferentiated field. */
-[data-theme="dark"] .tile { --tile-bg: #1d1d1f; }
+/* subtle mouse-tracking radial spotlight */
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(380px circle at var(--mx) var(--my),
+              rgba(0, 113, 227, 0.065), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.tile:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--tile-line));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.055);
+}
+[data-theme="dark"] .tile:hover {
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+}
+.tile:hover::before { opacity: 1; }
 
-.tile-wide { grid-column: 1 / -1; min-height: 400px; }
+.tile-wide { grid-column: 1 / -1; }
 
-/* The feature tile is the inverse: black in light mode, near-black in dark
-   mode, with a blue glow bleeding in from the right. */
+/* When filtered to a single category, collapse wide cards into balanced 2-col cards */
+.tiles[data-filtered="true"] .tile-wide { grid-column: span 1; }
+.tiles[data-filtered="true"] .tile-split {
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+  align-items: stretch;
+  height: 100%;
+}
+.tiles[data-filtered="true"] .tile-visual {
+  order: -1;
+  overflow: hidden;
+  padding: 0.65rem 0.75rem;
+  border-radius: 16px;
+}
+.tiles[data-filtered="true"] .tile-visual .art {
+  width: auto;
+  max-width: 100%;
+  max-height: 136px;
+  height: auto;
+}
+
+/* Flagship dark card (VCT First Blood Analytics) */
 .tile-feature {
-  --tile-bg: #000;
+  --tile-bg: #0c0d10;
   --tile-ink: #f5f5f7;
-  --tile-ink-2: #a1a1a6;
-  --tile-ink-3: #86868b;
-  --tile-line: rgba(255, 255, 255, 0.16);
+  --tile-ink-2: #b4b4bb;
+  --tile-ink-3: #86868e;
+  --tile-line: rgba(255, 255, 255, 0.11);
   --accent: #2997ff;
+  --accent-hover: #4aabff;
+  --live: #30d158;
+  --live-bg: rgba(48, 209, 88, 0.16);
 }
 [data-theme="dark"] .tile-feature {
-  --tile-bg: #141416;
-  --tile-line: rgba(255, 255, 255, 0.1);
+  --tile-bg: #131418;
+  --tile-line: rgba(255, 255, 255, 0.11);
 }
 .tile-feature::after {
   content: "";
   position: absolute;
-  inset: -40% -10% auto auto;
-  width: 70%;
-  height: 150%;
-  background: radial-gradient(50% 50% at 60% 45%, rgba(0, 113, 227, 0.34), transparent 72%);
-  filter: blur(30px);
+  inset: -30% -8% auto auto;
+  width: 58%;
+  height: 140%;
+  background:
+    radial-gradient(50% 50% at 62% 38%, rgba(255, 70, 85, 0.18), transparent 68%),
+    radial-gradient(52% 52% at 40% 62%, rgba(41, 151, 255, 0.22), transparent 72%);
+  filter: blur(36px);
   pointer-events: none;
 }
-.tile-feature .tile-body { position: relative; }
+.tile-feature::before {
+  background: radial-gradient(420px circle at var(--mx) var(--my),
+              rgba(255, 255, 255, 0.065), transparent 60%);
+}
 
-.tile-body { max-width: 46ch; }
-.tile-feature .tile-body { max-width: 58ch; }
+/* Split layout for wide tiles */
+.tile-split {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.9fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+}
+
+.tile-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--tile-ink) 4%, transparent);
+  border: 1px solid var(--tile-line);
+}
+.tile-feature .tile-visual {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+.tile-art-bar {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 1.4rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--tile-ink) 3.2%, transparent);
+  border: 1px solid var(--tile-line);
+}
+
+.art { width: 100%; height: auto; color: var(--tile-ink); }
+
+.tile-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.85rem;
+  margin-bottom: 0.65rem;
+}
 
 .tile-tag {
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--accent);
-  margin: 0 0 0.7rem;
+  margin: 0;
+}
+.tile-body > .tile-tag { margin-bottom: 0.65rem; }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.18rem 0.62rem;
+  border-radius: 980px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.status-live {
+  background: var(--live-bg);
+  color: var(--live);
 }
 
 .tile-title {
-  font-size: clamp(1.6rem, 3vw, 2.35rem);
-  font-weight: 600;
-  line-height: 1.08;
+  font-size: clamp(1.5rem, 2.7vw, 2.15rem);
+  font-weight: 650;
+  line-height: 1.1;
   letter-spacing: -0.032em;
-  margin: 0 0 0.9rem;
+  margin: 0 0 0.8rem;
   color: var(--tile-ink);
 }
 
 .tile-lead {
-  font-size: 1.0625rem;
-  line-height: 1.45;
+  font-size: 1.02rem;
+  line-height: 1.48;
   color: var(--tile-ink-2);
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.75rem;
+  max-width: 52ch;
 }
+
 .tile-note {
-  font-size: 0.9375rem;
-  line-height: 1.5;
+  font-size: 0.915rem;
+  line-height: 1.52;
   color: var(--tile-ink-3);
-  margin: 0 0 1.6rem;
+  margin: 0 0 1.5rem;
+  max-width: 52ch;
 }
 .tile-note em { color: var(--tile-ink-2); font-style: italic; }
 
 .tile-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 2.25rem;
-  margin: 0 0 1.75rem;
-  padding-top: 1.25rem;
+  gap: 0.85rem 2rem;
+  margin: auto 0 1.55rem;
+  padding-top: 1.15rem;
   border-top: 1px solid var(--tile-line);
 }
-.tile-stats li { display: grid; gap: 0.15rem; }
+.tile-stats li { display: grid; gap: 0.12rem; }
 .tile-stats strong {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 650;
   letter-spacing: -0.025em;
   color: var(--tile-ink);
   font-variant-numeric: tabular-nums;
 }
-.tile-stats span { font-size: 0.75rem; color: var(--tile-ink-3); }
+.tile-stats span { font-size: 0.74rem; color: var(--tile-ink-3); }
 
+.tile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem 1.35rem;
+}
 .tile .text-link { color: var(--accent); }
+
+/* ---------- side experiments compact block ---------- */
+.experiments-block {
+  margin-top: 1.75rem;
+  padding: 1.5rem clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: 22px;
+  background: var(--surface);
+  border: 1px solid var(--hairline-soft);
+}
+.experiments-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+.experiments-title {
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.experiments-sub {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.exp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: 1.1rem 0;
+}
+.exp-item + .exp-item { border-top: 1px solid var(--hairline-soft); }
+.exp-item:last-child { padding-bottom: 0.15rem; }
+
+.exp-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.25rem;
+}
+.exp-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+.exp-name:hover { color: var(--accent); text-decoration: none; }
+
+.exp-pill {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--ink-3);
+  background: var(--bg-alt);
+  border: 1px solid var(--hairline-soft);
+  padding: 0.12rem 0.55rem;
+  border-radius: 980px;
+}
+
+.exp-desc {
+  font-size: 0.9rem;
+  line-height: 1.48;
+  color: var(--ink-2);
+  max-width: 66ch;
+}
+.exp-link { flex-shrink: 0; font-size: 0.875rem; }
 
 /* ---------- about ---------- */
 .about-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: clamp(2rem, 6vw, 5rem);
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: clamp(2rem, 6vw, 4.75rem);
   align-items: start;
 }
 
 .about-text p {
   color: var(--ink-2);
-  margin: 0 0 1.15rem;
-  max-width: 62ch;
+  margin: 0 0 1.1rem;
+  max-width: 60ch;
 }
 .about-lead {
-  font-size: clamp(1.15rem, 1.9vw, 1.375rem);
-  line-height: 1.42;
+  font-size: clamp(1.125rem, 1.9vw, 1.35rem);
+  line-height: 1.44;
   letter-spacing: -0.018em;
   color: var(--ink) !important;
 }
 .about-text strong { color: var(--ink); font-weight: 600; }
 .about-text em { color: var(--ink); font-style: italic; }
 
-.facts { border-top: 1px solid var(--hairline); }
+.facts { border-top: 1px solid var(--hairline-soft); }
 .facts li {
   display: grid;
   gap: 0.2rem;
   padding: 0.95rem 0;
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline-soft);
 }
 .fact-label {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--ink-3);
 }
 .fact-value { font-size: 0.9375rem; color: var(--ink); }
 
 /* ---------- toolkit ---------- */
-.spec-rows { border-top: 1px solid var(--hairline); }
+.spec-rows { border-top: 1px solid var(--hairline-soft); }
 .spec-row {
   display: grid;
   grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: baseline;
-  padding: 1.4rem 0;
-  border-bottom: 1px solid var(--hairline);
+  padding: 1.35rem 0;
+  border-bottom: 1px solid var(--hairline-soft);
 }
 .spec-row-title {
   font-size: 0.9375rem;
@@ -498,12 +797,12 @@ h1, h2, h3 { text-wrap: balance; }
   letter-spacing: -0.01em;
   margin: 0;
 }
-.spec-row-body { font-size: 1.0625rem; color: var(--ink-2); }
+.spec-row-body { font-size: 1.02rem; color: var(--ink-2); line-height: 1.55; }
 
 /* ---------- footer ---------- */
 .site-footer {
-  border-top: 1px solid var(--hairline);
-  padding: 2.25rem 0 3.5rem;
+  border-top: 1px solid var(--hairline-soft);
+  padding: 2.25rem 0 3.25rem;
 }
 .site-footer .container {
   display: flex;
@@ -512,61 +811,60 @@ h1, h2, h3 { text-wrap: balance; }
   align-items: center;
   justify-content: space-between;
 }
-.footer-legal { font-size: 0.75rem; color: var(--ink-3); line-height: 1.5; }
-.footer-links { display: flex; gap: 1.5rem; font-size: 0.75rem; }
+.footer-legal { font-size: 0.78rem; color: var(--ink-3); line-height: 1.5; }
+.footer-links { display: flex; gap: 1.4rem; font-size: 0.78rem; }
 .footer-links a { color: var(--ink-3); }
 .footer-links a:hover { color: var(--ink); }
 
-/* ---------- reveal-on-scroll ----------
-   Deliberately conservative, and an earlier version of this stylesheet got it
-   wrong. It set .reveal to opacity:0 and relied on IntersectionObserver to fade
-   content in. That is a real hazard for a deliverable that gets screenshotted
-   and printed: a full-page capture taken before the observer fires — or a
-   browser with JavaScript disabled — renders the page with its content
-   missing.
-
-   So the base state is fully visible and no rule hides anything. The animation
-   is applied *only* once the script adds .is-visible, at which point it plays
-   from opacity 0 to 1. If the script never runs, the content is simply on
-   screen with no animation. The failure mode is "no animation", never
-   "no page". */
-.js .reveal.is-visible { animation: reveal-in 0.55s cubic-bezier(0.22, 0.61, 0.36, 1); }
-
+/* ---------- safe reveal-on-scroll (never hides content if JS is off) ---------- */
+.js .reveal.is-visible {
+  animation: reveal-in 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
 @keyframes reveal-in {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: none; }
 }
 
 /* ---------- responsive ---------- */
-@media (max-width: 900px) {
-  .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+@media (max-width: 960px) {
+  .tile-split { grid-template-columns: 1fr; gap: 1.5rem; }
+  .tile-visual { order: -1; }
+  .about-grid { grid-template-columns: 1fr; gap: 2.25rem; }
 }
 
-@media (max-width: 760px) {
-  .container { width: min(100% - 2rem, var(--maxw)); }
-  .nav { width: min(100% - 2rem, var(--maxw)); }
+@media (max-width: 780px) {
+  .container, .nav { width: min(100% - 2rem, var(--maxw)); }
   .tiles { grid-template-columns: 1fr; }
-  .spec { grid-template-columns: 1fr; gap: 0; }
-  .spec-item { padding: 1.25rem 0; }
-  .spec-item + .spec-item { border-left: 0; border-top: 1px solid var(--hairline); }
-  .tile { min-height: 0; }
+  .spec { grid-template-columns: repeat(2, 1fr); gap: 1.25rem 0; }
+  .spec-item:nth-child(3) { border-left: 0; }
   .spec-row { grid-template-columns: 1fr; gap: 0.35rem; }
+  .exp-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
 }
 
 @media (max-width: 620px) {
-  .nav-links { display: none; }
-  .globalnav { position: static; }
-  .hero-cta { gap: 1.25rem; }
-  .footer .container,
+  .nav {
+    flex-wrap: wrap;
+    padding: 0.55rem 0;
+    gap: 0.45rem 1rem;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    padding-top: 0.45rem;
+    border-top: 1px solid var(--hairline-soft);
+    gap: 1.25rem;
+  }
+  .filter-bar { width: 100%; justify-content: flex-start; border-radius: 16px; }
+  .tile { padding: 1.5rem; border-radius: 22px; }
   .site-footer .container { justify-content: flex-start; }
 }
 
-/* ---------- print (the report embeds screenshots, but a clean print helps) --- */
+/* ---------- print ---------- */
 @media print {
-  .globalnav, .hero-glow, .theme-toggle, .hero-cta { display: none; }
+  .globalnav, .hero-glow, .theme-toggle, .hero-cta, .filter-bar { display: none; }
   body { background: #fff; color: #000; }
-  .tile, .section-projects { background: #fff; }
-  .tile-feature { background: #fff; color: #000; }
-  .tile-feature::after { display: none; }
+  .tile, .section-projects, .experiments-block { background: #fff; box-shadow: none; }
+  .tile-feature { background: #fff; color: #000; --tile-ink: #000; --tile-ink-2: #333; --tile-ink-3: #555; }
+  .tile-feature::after, .tile::before { display: none; }
   .js .reveal { opacity: 1; transform: none; }
 }
